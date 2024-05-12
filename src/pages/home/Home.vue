@@ -40,130 +40,131 @@ import { getTokenInfo } from '@/libs/token';
 import { mapActions, mapGetters } from 'vuex';
 import LayAside from '@/components/layout/LayAside.vue';
 export default {
-	name: 'index',
-	components: { LayAside },
-	data() {
-		return {
-			// 左侧菜单是否折叠
-			isCollapse: false,
-			// 面包屑
-			breadcrumb: [],
-			// 用户信息
-			user: {},
-			// 选项卡索引
-			tabIndex: '1',
-		};
-	},
-	computed: {
-		...mapGetters('navTab', {
-			navTab: 'getTab',
-			navTabIndex: 'getTabIndex',
-		}),
-		...mapGetters('adminInfo', {
-			menus: 'menus',
-		}),
-	},
-	mounted() {
-		this.user = getTokenInfo();
-		this.initNavTabs();
-		this.initNavTabIndex();
-	},
-	watch: {
-		// 监听路由变化，如果是首页，设置navTab的索引为首页
-		$route(val) {
-			if (val.path === '/home/dashboard') {
-				let findRes = this.navTab.find((v) => v.path === val.path);
-				this.tabIndex = findRes.id + '';
-				this.setTabIndex(findRes.id);
-			}
+  name: 'index',
+  components: { LayAside },
+  data() {
+    return {
+      // 左侧菜单是否折叠
+      isCollapse: false,
+      // 面包屑
+      breadcrumb: [],
+      // 用户信息
+      user: {},
+      // 选项卡索引
+      tabIndex: '1',
+    };
+  },
+  computed: {
+    ...mapGetters('navTab', {
+      navTab: 'getTab',
+      navTabIndex: 'getTabIndex',
+    }),
+    ...mapGetters('adminInfo', {
+      menus: 'menus',
+    }),
+  },
+  mounted() {
+    this.user = getTokenInfo();
+    this.initNavTabs();
+    this.initNavTabIndex();
+  },
+  watch: {
+    // 监听路由变化，如果是首页，设置navTab的索引为首页
+    $route(val) {
+      if (val.path === '/home/dashboard') {
+        let findRes = this.navTab.find((v) => v.path === val.path);
+        this.tabIndex = findRes.id + '';
+        this.setTabIndex(findRes.id);
+      }
 
-			this.getBreadcrumb();
-		},
-		// 点击左侧菜单的时候，设置navTab的索引
-		navTabIndex(val) {
-			if (!val) {
-				return;
-			}
-			this.tabIndex = val + '';
-			// 手动点击选项卡
-			// let findIndex = this.navTab.findIndex((v) => v.id === val * 1);
-			this.navTabChange({ name: val });
-		},
-	},
-	methods: {
-		...mapActions('navTab', ['setTab', 'delTab', 'setTabIndex']),
-		// 面包屑
-		getBreadcrumb() {
-			let names = this.$route.matched.filter((v) => v.name).map((v) => v.name);
-			this.breadcrumb = names[0] === 'dashboard' ? [] : names;
-		},
-		// 左侧菜单切换事件
-		onToggle(isCollapse) {
-			this.isCollapse = isCollapse;
-		},
-		// 从localstore读取缓存的数据
-		initNavTabs() {
-			let cacheNavTab = this.$utils.SStore.get('navTab') || [];
-			if (!cacheNavTab.length) {
-				return;
-			}
+      this.getBreadcrumb();
+    },
+    // 点击左侧菜单的时候，设置navTab的索引
+    navTabIndex(val) {
+      if (!val) {
+        return;
+      }
+      this.tabIndex = val + '';
+      // 手动点击选项卡
+      // let findIndex = this.navTab.findIndex((v) => v.id === val * 1);
+      this.navTabChange({ name: val });
+    },
+  },
+  methods: {
+    ...mapActions('navTab', ['setTab', 'delTab', 'setTabIndex']),
+    // 面包屑
+    getBreadcrumb() {
+      let names = this.$route.matched.filter((v) => v.name).map((v) => v.name);
+      this.breadcrumb = names[0] === 'dashboard' ? [] : names;
+    },
+    // 左侧菜单切换事件
+    onToggle(isCollapse) {
+      this.isCollapse = isCollapse;
+    },
+    // 从localstore读取缓存的数据
+    initNavTabs() {
+      let cacheNavTab = this.$utils.SStore.get('navTab') || [];
+      if (!cacheNavTab.length) {
+        return;
+      }
 
-			cacheNavTab.forEach((v) => {
-				this.setTab(v);
-			});
-		},
-		// 初始化导航索引
-		initNavTabIndex() {
-			let cacheIndex = this.$utils.SStore.get('tabIndex') || 1;
-			let findRes = this.navTab.find((v) => v.id == cacheIndex);
-			if (findRes) {
-				this.tabIndex = findRes.id + '';
-				this.setTabIndex(findRes.id);
-			}
-		},
-		// 选项卡导航 切换
-		navTabChange(val) {
-			let targetTab;
-			if (val.id === 1) {
-				targetTab = this.navTab[0];
-			} else {
-				targetTab = this.navTab.find((v) => v.id == val.name * 1);
-			}
+      cacheNavTab.forEach((v) => {
+        this.setTab(v);
+      });
+    },
+    // 初始化导航索引
+    initNavTabIndex() {
+      let cacheIndex = this.$utils.SStore.get('tabIndex') || 1;
+      let findRes = this.navTab.find((v) => v.id == cacheIndex);
+      if (findRes) {
+        this.tabIndex = findRes.id + '';
+        this.setTabIndex(findRes.id);
+      }
+    },
+    // 选项卡导航 切换
+    navTabChange(val) {
+      let targetTab;
+      if (val.id === 1) {
+        targetTab = this.navTab[0];
+      } else {
+        targetTab = this.navTab.find((v) => v.id == val.name * 1);
+      }
 
-			if (targetTab) {
-				this.$router.push({
-					path: targetTab.path,
-				});
-				this.tabIndex = targetTab.id + '';
-				this.setTabIndex(targetTab.id);
-			}
-		},
-		// 选项卡导航 删除
-		navTabRemove(id) {
-			let findIndex = this.navTab.findIndex((v) => v.id === id * 1);
+      if (targetTab) {
+        this.$router.push({
+          path: targetTab.path,
+        });
+        this.tabIndex = targetTab.id + '';
+        this.setTabIndex(targetTab.id);
+      }
+    },
+    // 选项卡导航 删除
+    navTabRemove(id) {
+      let findIndex = this.navTab.findIndex((v) => v.id === id * 1);
 
-			this.delTab(id);
-			// 如果删除的是当前选中的选项卡，则显示前一个
-			if (id * 1 === this.tabIndex * 1) {
-				let prevTab = this.navTab[findIndex - 1];
-				this.navTabChange({ name: prevTab.id });
-			}
-		},
-		// 退出登录
-		async logout() {
-			let res = await this.$confirm('确认要退出吗?', '提示', { type: 'warning' }).catch((err) => err);
-			if (res !== 'confirm') {
-				return;
-			}
-			let id = this.user.userId;
-			const { code } = await this.$api.common.logout({ id });
-			if (code == 1) {
-				this.$store.dispatch('adminInfo/clear').then(() => {
-					this.$router.push('/login');
-				});
-			}
-		},
-	},
+      this.delTab(id);
+      // 如果删除的是当前选中的选项卡，则显示前一个
+      if (id * 1 === this.tabIndex * 1) {
+        let prevTab = this.navTab[findIndex - 1];
+        this.navTabChange({ name: prevTab.id });
+      }
+    },
+    // 退出登录
+    async logout() {
+      let res = await this.$confirm('确认要退出吗?', '提示', { type: 'warning' }).catch((err) => err);
+      if (res !== 'confirm') {
+        return;
+      }
+      let id = this.user.userId;
+      const { code } = await this.$api.common.logout({ id });
+      if (code == 1) {
+        this.$store.dispatch('adminInfo/clear').then(() => {
+          this.$store.dispatch('navTab/initTab');
+          this.$router.push('/login');
+        });
+      }
+    },
+  },
 };
 </script>
 

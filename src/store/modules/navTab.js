@@ -1,7 +1,6 @@
+const defTab = { meta: { title: '首页' }, id: '1', names: [], path: '/home/dashboard' };
 const state = () => ({
-	info: [
-		{ meta: { title: '首页' }, id: '1', names: [], path: '/home/dashboard' },
-	],
+	info: [defTab],
 	tabIndex: 1,
 });
 
@@ -26,6 +25,9 @@ const mutations = {
 		state.tabIndex = payload;
 		sessionStorage.setItem('tabIndex', JSON.stringify(payload));
 	},
+	initTab(state) {
+		state.info = [defTab];
+	}
 };
 
 // this.$store.dispatch('xxx')
@@ -40,6 +42,9 @@ const actions = {
 	setTabIndex({ commit }, payload) {
 		commit('setTabIndex', payload);
 	},
+	initTab({ commit }) {
+		commit('initTab');
+	}
 };
 
 // computed 调用 mapGetters(['xxx'...])
