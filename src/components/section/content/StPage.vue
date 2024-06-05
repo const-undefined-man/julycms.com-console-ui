@@ -2,22 +2,13 @@
   <div class="st-page">
     <el-form ref="form" :model="form" label-position="left" label-width="120px" class="mt15">
       <el-form-item label="标题" size="small">
-        <el-input v-model="form.title" name="title" />
+        <el-input v-model="form.title" />
       </el-form-item>
-      <el-form-item label="副标题" size="small">
-        <el-input v-model="form.subTitle" name="title" />
+      <el-form-item label="描述" size="small">
+        <el-input v-model="form.description" type="textarea" />
       </el-form-item>
       <el-form-item label="内容" class="editor">
         <CKEditor v-model="form.content.content" :editor="editor.app" :config="editor.config" @ready="onEditorReady" />
-      </el-form-item>
-      <el-form-item label="SEO标题">
-        <el-input v-model="form.seoTitle" />
-      </el-form-item>
-      <el-form-item label="SEO关键词">
-        <el-input v-model="form.seoKeywords" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" />
-      </el-form-item>
-      <el-form-item label="SEO描述">
-        <el-input v-model="form.seoDescription" type="textarea" :autosize="{ minRows: 3, maxRows: 5 }" />
       </el-form-item>
     </el-form>
   </div>

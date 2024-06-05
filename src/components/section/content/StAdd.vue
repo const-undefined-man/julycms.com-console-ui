@@ -5,8 +5,8 @@
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" />
         </el-form-item>
-        <el-form-item label="副标题">
-          <el-input v-model="form.subTitle" />
+        <el-form-item label="描述">
+          <el-input v-model="form.description" type="textarea" />
         </el-form-item>
         <el-form-item label="封面图片">
           <com-upload v-model="form.cover"></com-upload>
@@ -101,97 +101,98 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import CKEditor from '@ckeditor/ckeditor5-vue2';
 import CKEditorUploadAdapter from '@/libs/CKEditorUploadAdapter';
 export default {
-	name: 'StAdd',
-	components: { CKEditor: CKEditor.component },
-	props: {
-		type: {
-			type: String,
-			default: 'content',
-		},
-		detail: {
-			type: Object,
-			default: () => {},
-		},
-	},
-	data() {
-		return {
-			activeName: '0',
-			editor: {
-				app: ClassicEditor,
-				config: {},
-			},
-			tags: [],
-			form: {
-				title: '',
-				subTitle: '',
-				cover: {},
-				content: {
-					content: '',
-				},
-				albums: [],
-				tag: [],
-				seoTitle: '',
-				seoKeywords: '',
-				seoDescription: '',
-				readNum: 999,
-				likeNum: 999,
-			},
-			rules: {
-				title: [{ required: true, message: '请输入标题' }],
-				content: {
-					content: [{ required: true, message: '请输入内容' }],
-				},
-			},
-		};
-	},
-	watch: {
-		detail: {
-			handler(val) {
-				this.form = Object.assign(this.form, val);
-			},
-			immediate: true,
-			deep: true,
-		},
-	},
-	methods: {
-		onEditorReady(editor) {
-			editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-				return new CKEditorUploadAdapter({ loader });
-			};
-		},
-		onAlbumAdd() {
-			this.form.albums.push({
-				img: { url: '' },
-				description: '',
-				listorder: this.form.albums.length + 1,
-			});
-			this.$forceUpdate();
-		},
-		onAlbumDel(index) {
-			this.form.albums.splice(index, 1);
-			this.$forceUpdate();
-		},
-		onAlbumUp(index) {
-			const { albums } = this.form;
-			[albums[index], albums[index - 1]] = [albums[index - 1], albums[index]];
-			this.$forceUpdate();
-		},
-		onAlbumDown(index) {
-			const { albums } = this.form;
-			[albums[index], albums[index + 1]] = [albums[index + 1], albums[index]];
-			this.$forceUpdate();
-		},
-		async getData() {
-			let valid = false;
-			try {
-				valid = await this.$refs.form.validate();
-			} catch (error) {
-				valid = false;
-			}
+  name: 'StAdd',
+  components: { CKEditor: CKEditor.component },
+  props: {
+    type: {
+      type: String,
+      default: 'content',
+    },
+    detail: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      activeName: '0',
+      editor: {
+        app: ClassicEditor,
+        config: {},
+      },
+      tags: [],
+      form: {
+        title: '',
+        description: '',
+        cover: {},
+        content: {
+          content: '',
+        },
+        albums: [],
+        tag: [],
+        seoTitle: '',
+        seoKeywords: '',
+        seoDescription: '',
+        readNum: 999,
+        likeNum: 999,
+      },
+      rules: {
+        title: [{ required: true, message: '请输入标题' }],
+        content: {
+          content: [{ required: true, message: '请输入内容' }],
+        },
+      },
+    };
+  },
+  watch: {
+    detail: {
+      handler(val) {
+        this.form = Object.assign(this.form, val);
+        this.form.cover = this.form.cover || {};
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
+  methods: {
+    onEditorReady(editor) {
+      editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+        return new CKEditorUploadAdapter({ loader });
+      };
+    },
+    onAlbumAdd() {
+      this.form.albums.push({
+        img: { url: '' },
+        description: '',
+        listorder: this.form.albums.length + 1,
+      });
+      this.$forceUpdate();
+    },
+    onAlbumDel(index) {
+      this.form.albums.splice(index, 1);
+      this.$forceUpdate();
+    },
+    onAlbumUp(index) {
+      const { albums } = this.form;
+      [albums[index], albums[index - 1]] = [albums[index - 1], albums[index]];
+      this.$forceUpdate();
+    },
+    onAlbumDown(index) {
+      const { albums } = this.form;
+      [albums[index], albums[index + 1]] = [albums[index + 1], albums[index]];
+      this.$forceUpdate();
+    },
+    async getData() {
+      let valid = false;
+      try {
+        valid = await this.$refs.form.validate();
+      } catch (error) {
+        valid = false;
+      }
 
-			return valid ? this.form : false;
-		},
-	},
+      return valid ? this.form : false;
+    },
+  },
 };
 </script>
 

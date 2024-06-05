@@ -107,11 +107,9 @@ export default {
           width: 500,
           fn: this.listView,
         },
-        { label: '发布人', prop: 'author' },
         { label: '时间', prop: 'createdAt', width: 180 },
         { label: '阅读', prop: 'readNum' },
         { label: '点赞', prop: 'likeNum' },
-        // { label: '评论', prop: 'cmts', type: 'link', fn: this.listComment },
         {
           label: '是否显示',
           prop: 'display',
